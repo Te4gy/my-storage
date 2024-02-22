@@ -1,8 +1,8 @@
 package com.storage.mystorage.services;
 
 import com.storage.mystorage.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myEntitys.Product;
 import com.storage.mystorage.myDto.wrapperDto.DocumentsWrapper;
+import com.storage.mystorage.myEntitys.Product;
 import com.storage.mystorage.myEntitys.Storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,24 +17,28 @@ public class DocumentService {
     final StorageService storageService;
 
     //todo Много запросов в БД!
-    public StorageDto admission(DocumentsWrapper documentsWrapper){
+    public List<StorageDto> admission(DocumentsWrapper documentsWrapper) {
         var productList = documentsWrapper.getProductList();
         Long storageId = documentsWrapper.getStorageId();
-        return storageService.saveProductsToStorage(storageId, productList);
+        return List.of(storageService.saveProductsToStorage(storageId, productList));
     }
 
     //todo Что если продукт уже отсутствует?
     //todo Много запросов в БД!
-    public StorageDto sell(DocumentsWrapper sellWrapper){
+    public List<StorageDto> sell(DocumentsWrapper sellWrapper) {
         List<Product> productListToSell = sellWrapper.getProductList();
         Long storageId = sellWrapper.getStorageId();
         List<Product> soldProducts = removeProductsFromStorage(storageId, productListToSell);
-        return storageService.saveProductsToStorage(storageId, soldProducts);
+        return List.of(storageService.saveProductsToStorage(storageId, soldProducts));
     }
 
 
     //todo При переносе товара, товар должен УДАЛЯТЬСЯ с прошлого склада, либо оставить пока так а потом доработать.
-    public List<StorageDto> transfer(Long fromStorageId, Long toStorageId, List<Product> productToTransferList){
+    public List<StorageDto> transfer(DocumentsWrapper documentsWrapper) {
+        Long fromStorageId = documentsWrapper.getStorageFromId();
+        Long toStorageId = documentsWrapper.getStorageToId();
+        List<Product> productToTransferList = documentsWrapper.getProductList();
+
         Storage storageTo = storageService.findStorageById(toStorageId);
 
         Storage storageFrom = storageService.findStorageById(fromStorageId);
@@ -50,20 +54,20 @@ public class DocumentService {
 //        List<Product> soldProducts = extractProductsFromStorage(fromStorageId, fromStorageProducts); //удаляем товары с складаFROM
 
         storageFrom.getProductList().removeAll(fromStorageProducts);
-        Storage updatedStorageFrom  = storageService.saveStorage(storageFrom);
+        Storage updatedStorageFrom = storageService.saveStorage(storageFrom);
         StorageDto updatedStorageFromDto = StorageProductConvertor.toStorageDto(updatedStorageFrom);
 
         return List.of(updatedStorageToDto, updatedStorageFromDto);
     }
 
 
-    public List<Product> removeProductsFromStorage(Long storageId, List<Product> productsToRemove){
+    public List<Product> removeProductsFromStorage(Long storageId, List<Product> productsToRemove) {
         List<Product> productsInStorage = storageService.findStorageById(storageId).getProductList();
         List<Product> soldProducts = new ArrayList<>();
-        for (Product productToSell : productsToRemove){
+        for (Product productToSell : productsToRemove) {
             //todo можно заменить на стрим
-            for(Product productInStorage : productsInStorage){
-                if(productToSell.getId().equals(productInStorage.getId())){
+            for (Product productInStorage : productsInStorage) {
+                if (productToSell.getId().equals(productInStorage.getId())) {
                     int lastBuyPrice = productToSell.getLastBuyPrice();
                     productInStorage.setLastBuyPrice(lastBuyPrice);
                     productInStorage.setExists(false);
@@ -75,12 +79,12 @@ public class DocumentService {
     }
 
 
-    public List<Product> extractProductsFromStorage(Long storageId, List<Product> productList){
+    public List<Product> extractProductsFromStorage(Long storageId, List<Product> productList) {
         List<Product> productListFromStorage = storageService.findStorageById(storageId).getProductList();
         List<Product> extractedList = new ArrayList<>();
-        for(Product productFromStorage: productListFromStorage){
-            for(Product productToExtract : productList){
-                if(productFromStorage.getId().equals(productToExtract.getId())){
+        for (Product productFromStorage : productListFromStorage) {
+            for (Product productToExtract : productList) {
+                if (productFromStorage.getId().equals(productToExtract.getId())) {
                     extractedList.add(productFromStorage);
                 }
             }
