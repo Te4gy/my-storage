@@ -1,12 +1,16 @@
-package com.storage.mystorage.myDto.answersDto;
+package com.storage.mystorage.utils.myDto.answersDto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
 public class StorageDto {
     private Long id;
     private String name;

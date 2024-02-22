@@ -1,6 +1,6 @@
 package com.storage.mystorage.utils.reports;
 
-import com.storage.mystorage.myDto.answersDto.StorageDto;
+import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
 
 import java.util.List;
 

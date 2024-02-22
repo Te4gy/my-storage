@@ -1,12 +1,13 @@
 package com.storage.mystorage.services;
 
-import com.storage.mystorage.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myDto.wrapperDto.DocumentsWrapper;
+import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
+import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;
 import com.storage.mystorage.utils.documents.Document;
 import com.storage.mystorage.utils.reports.Report;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -22,16 +23,14 @@ public class Receiver {
                 .filter(document -> document.checkDocument(documentName))
                 .findFirst()
                 .map(document -> document.process(documentsWrapper))
-                .orElseThrow(RuntimeException::new);
+                .orElseGet(ArrayList::new);
     }
 
-    //todo обработать все null
     public List<StorageDto> reportReceiver(String reportName) {
         return reportList.stream()
                 .filter(report -> report.checkReport(reportName))
                 .findFirst()
                 .map(Report::process)
-                .orElseThrow(RuntimeException::new);
-//                .orElseGet();
+                .orElseGet(ArrayList::new);
     }
 }
