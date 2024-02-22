@@ -9,7 +9,7 @@ import java.util.List;
 
 public class StorageProductConvertor {
 
-    public static ProductDto toProductDto(Product product){
+    public static ProductDto toProductDto(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
         productDto.setName(product.getName());
@@ -19,22 +19,16 @@ public class StorageProductConvertor {
         return productDto;
     }
 
-    public static StorageDto toStorageDto(Storage storage){
+    public static StorageDto toStorageDto(Storage storage) {
         StorageDto storageDto = new StorageDto();
         storageDto.setId(storage.getId());
         storageDto.setName(storage.getName());
-        if (storage.getProductList() != null){
+        if (storage.getProductList() != null) {
             List<ProductDto> productDtoList = storage.getProductList().stream()
                     .map((StorageProductConvertor::toProductDto))
                     .toList();
             storageDto.setProductList(productDtoList);
         }
         return storageDto;
-    }
-
-    public static List<ProductDto> toProductDtoList(List<Product> productList){
-        return productList.stream()
-                .map(StorageProductConvertor::toProductDto)
-                .toList();
     }
 }
