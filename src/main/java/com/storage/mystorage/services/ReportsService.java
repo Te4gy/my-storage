@@ -1,7 +1,7 @@
 package com.storage.mystorage.services;
 
-import com.storage.mystorage.myDto.answersDto.ProductDto;
-import com.storage.mystorage.myDto.answersDto.StorageDto;
+import com.storage.mystorage.utils.myDto.answersDto.ProductDto;
+import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
 import com.storage.mystorage.myEntitys.Storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

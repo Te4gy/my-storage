@@ -1,7 +1,7 @@
 package com.storage.mystorage.myControllers;
 
-import com.storage.mystorage.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myDto.wrapperDto.DocumentsWrapper;
+import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
+import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;
 import com.storage.mystorage.services.DocumentService;
 import com.storage.mystorage.services.Receiver;
 import lombok.AllArgsConstructor;
