@@ -1,4 +1,4 @@
-package com.storage.mystorage.services;
+package com.storage.mystorage.services.EntityRepos;
 
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
 import com.storage.mystorage.myEntitys.Product;
@@ -21,13 +21,14 @@ public class StorageService {
     }
 
     public StorageDto saveProductsToStorage(Long storageId, List<Product> productList) {
-        Storage storage = findStorageById(storageId);
-        storage.setProductList(productList);
-        for (Product product : productList) {
-            product.setStorage(storage);
-        }
-        Storage updatedStorage = storageRepository.save(storage);
-        return StorageProductConvertor.toStorageDto(updatedStorage);
+//        Storage storage = findStorageById(storageId);
+//        storage.setProductList(productList);
+//        for (Product product : productList) {
+//            product.setStorage(storage);
+//        }
+//        Storage updatedStorage = storageRepository.save(storage);
+//        return StorageProductConvertor.toStorageDto(updatedStorage);
+        return null;
     }
 
     public Storage findStorageById(Long id) {

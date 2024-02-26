@@ -3,6 +3,7 @@ package com.storage.mystorage.services;
 import com.storage.mystorage.myEntitys.Product;
 import com.storage.mystorage.myEntitys.Storage;
 import com.storage.mystorage.myRepositories.StorageRepository;
+import com.storage.mystorage.services.EntityRepos.StorageService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

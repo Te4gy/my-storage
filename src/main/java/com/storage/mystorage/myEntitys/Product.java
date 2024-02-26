@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Setter
 @Getter
@@ -21,8 +24,18 @@ public class Product {
 
     private boolean isExists = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "storage_id")
-    private Storage storage;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductConnection> productConnectionList;
 
+
+    public void addProductConnection(ProductConnection productConnection){
+        if (productConnection != null) {
+            if (this.productConnectionList == null) {
+                this.productConnectionList = new ArrayList<>();
+            }
+            this.productConnectionList.add(productConnection);
+            productConnection.setProduct(this);
+        }
+
+    }
 }

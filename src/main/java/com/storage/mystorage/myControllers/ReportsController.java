@@ -23,7 +23,7 @@ public class ReportsController {
 
     @GetMapping("/{report}")
     public ResponseEntity<List<StorageDto>> report(@PathVariable("report") String report) {
-        List<StorageDto> storageDtosList = receiver.reportReceiver(report);
+        List<StorageDto> storageDtosList = receiver.reportReceived(report);
         return new ResponseEntity<>(storageDtosList, HttpStatus.OK);
     }
 }

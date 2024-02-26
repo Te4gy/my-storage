@@ -26,7 +26,7 @@ public class Receiver {
                 .orElseGet(ArrayList::new);
     }
 
-    public List<StorageDto> reportReceiver(String reportName) {
+    public List<StorageDto> reportReceived(String reportName) {
         return reportList.stream()
                 .filter(report -> report.checkReport(reportName))
                 .findFirst()

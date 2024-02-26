@@ -17,4 +17,7 @@ public class DocumentsWrapper {
     private Long storageToId;
     private int documentNumber;
     private List<Product> productList;
+
+    private int amount;
+    private Product product;
 }
