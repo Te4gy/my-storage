@@ -16,4 +16,5 @@ public class ProductDto {
     private int lastSellPrice;
     private int lastBuyPrice;
     private boolean isExists;
+    private int amount;
 }
