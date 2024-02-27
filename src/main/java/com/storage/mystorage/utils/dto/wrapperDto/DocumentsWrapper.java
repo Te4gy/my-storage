@@ -1,6 +1,6 @@
-package com.storage.mystorage.utils.myDto.wrapperDto;
+package com.storage.mystorage.utils.dto.wrapperDto;
 
-import com.storage.mystorage.myEntitys.Product;
+import com.storage.mystorage.entities.Product;
 import lombok.Getter;
 import lombok.Setter;
 

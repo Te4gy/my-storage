@@ -1,4 +1,4 @@
-package com.storage.mystorage.utils.myDto.answersDto;
+package com.storage.mystorage.utils.dto.answersDto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

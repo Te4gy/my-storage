@@ -1,9 +1,10 @@
-package com.storage.mystorage.myEntitys;
+package com.storage.mystorage.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ public class Storage {
 
     private String name;
 
-    @OneToMany(mappedBy = "storage", cascade = CascadeType.ALL)
-    private List<ProductConnection> productConnectionList;
+    @OneToMany(mappedBy = "storageId", cascade = CascadeType.ALL)
+    private List<ProductConnection> productConnectionList = new ArrayList<>();
 
 }

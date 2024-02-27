@@ -1,7 +1,7 @@
 package com.storage.mystorage.services;
 
-import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
-import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;
+import com.storage.mystorage.utils.dto.answersDto.StorageDto;
+import com.storage.mystorage.utils.dto.wrapperDto.DocumentsWrapper;
 import com.storage.mystorage.utils.documents.Document;
 import com.storage.mystorage.utils.reports.Report;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Receiver {
 
-    final List<Document> documentList;
-    final List<Report> reportList;
+    private final List<Document> documentList;
+    private final List<Report> reportList;
 
 
     public List<StorageDto> documentReceived(DocumentsWrapper documentsWrapper, String documentName) {

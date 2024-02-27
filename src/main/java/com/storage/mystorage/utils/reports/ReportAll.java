@@ -1,6 +1,6 @@
 package com.storage.mystorage.utils.reports;
 
-import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
+import com.storage.mystorage.utils.dto.answersDto.StorageDto;
 import com.storage.mystorage.services.ReportsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

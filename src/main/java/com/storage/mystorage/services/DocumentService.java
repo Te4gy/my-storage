@@ -1,17 +1,18 @@
 package com.storage.mystorage.services;
 
-import com.storage.mystorage.myEntitys.ProductConnection;
-import com.storage.mystorage.services.EntityRepos.ProductConnectionService;
-import com.storage.mystorage.services.EntityRepos.ProductService;
-import com.storage.mystorage.services.EntityRepos.StorageService;
-import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myEntitys.Product;
-import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;
-import com.storage.mystorage.myEntitys.Storage;
+import com.storage.mystorage.entities.Product;
+import com.storage.mystorage.entities.ProductConnection;
+import com.storage.mystorage.entities.Storage;
+import com.storage.mystorage.services.crud.ProductConnectionService;
+import com.storage.mystorage.services.crud.ProductService;
+import com.storage.mystorage.services.crud.StorageService;
+import com.storage.mystorage.utils.dto.answersDto.StorageDto;
+import com.storage.mystorage.utils.dto.wrapperDto.DocumentsWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -21,23 +22,50 @@ public class DocumentService {
     final StorageService storageService;
     final ProductService productService;
     final ProductConnectionService productConnectionService;
+    private final StorageProductConverter converter;
 
+
+    @Transactional
     public List<StorageDto> admission(DocumentsWrapper documentsWrapper) {
-        Long storageId = documentsWrapper.getStorageId();
-
         Product product = documentsWrapper.getProduct();
+
+        product = !productService.existsByName(product.getName())
+                ? productService.save(product)
+                : productService.getByName(product.getName());
+
+        Long storageId = documentsWrapper.getStorageId();
+        Storage storage = storageService.findStorageById(storageId);
+
         int amount = documentsWrapper.getAmount();
 
-        productService.saveProduct(product);
-        ProductConnection productConnection =
-                productConnectionService.saveProductToStorageConnection(storageId, product, amount);
-        Storage storage = productConnection.getStorage();
-        StorageDto storageDto = StorageProductConvertor.toStorageDto(storage);
-        return List.of(storageDto);
-//        return new ArrayList<>();
+        if (productConnectionService.existsByProductIdAndStorageId(product.getId(), storageId)) {
+            ProductConnection byProductId =
+                    productConnectionService.findByProductIdAndStorageId(product.getId(), storageId);
+            int currentAmount = byProductId.getAmount() + amount;
+            byProductId.setAmount(currentAmount);
+            productConnectionService.save(byProductId);
+        } else {
+            ProductConnection productConnection = new ProductConnection();
+            productConnection.setProductId(product.getId());
+            productConnection.setStorageId(storage.getId());
+            productConnection.setAmount(amount);
+            List<ProductConnection> productConnectionList = product.getProductConnectionList();
+            productConnectionList.add(productConnection);
+            product.setProductConnectionList(productConnectionList);
+            productService.save(product);
+        }
+
+        //todo я б не советовала возвращать такой объект. лучше вернуть сколько добавили элементов или сумма в итоге
+        storage = storageService.findStorageById(storageId);
+        StorageDto storageDto = converter.toStorageDto(storage);
+        return Collections.singletonList(storageDto);
     }
 
+    @Transactional
     public List<StorageDto> sell(DocumentsWrapper sellWrapper) {
+        //        boolean exists = productConnectionService.exists("chair", 5);
+        //        productConnectionService.delete("chair", 5);
+
         List<Product> productListToSell = sellWrapper.getProductList();
         Long storageId = sellWrapper.getStorageId();
         Storage storage = storageService.findStorageById(storageId);

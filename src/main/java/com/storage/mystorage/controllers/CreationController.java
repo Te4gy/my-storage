@@ -1,7 +1,7 @@
-package com.storage.mystorage.myControllers;
+package com.storage.mystorage.controllers;
 
-import com.storage.mystorage.myEntitys.Storage;
-import com.storage.mystorage.services.EntityRepos.StorageService;
+import com.storage.mystorage.entities.Storage;
+import com.storage.mystorage.services.crud.StorageService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/new")
 public class CreationController {
 
-    final StorageService storageService;
+    private final StorageService storageService;
 
     @PostMapping("/storage")
     public Storage newStorage(@RequestBody Storage request) {

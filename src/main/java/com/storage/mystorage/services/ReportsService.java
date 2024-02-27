@@ -1,9 +1,9 @@
 package com.storage.mystorage.services;
 
-import com.storage.mystorage.services.EntityRepos.StorageService;
-import com.storage.mystorage.utils.myDto.answersDto.ProductDto;
-import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myEntitys.Storage;
+import com.storage.mystorage.services.crud.StorageService;
+import com.storage.mystorage.utils.dto.answersDto.ProductDto;
+import com.storage.mystorage.utils.dto.answersDto.StorageDto;
+import com.storage.mystorage.entities.Storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +14,12 @@ import java.util.List;
 public class ReportsService {
 
     final StorageService storageService;
+    private final StorageProductConverter converter;
 
     public List<StorageDto> allProducts() {
         List<Storage> allStorages = storageService.findAllStorages();
         return allStorages.stream()
-                .map(StorageProductConvertor::toStorageDto)
+                .map(converter::toStorageDto)
                 .toList();
     }
 
@@ -26,7 +27,7 @@ public class ReportsService {
     public List<StorageDto> inStockProducts() {
         List<Storage> allStorages = storageService.findAllStorages();
         List<StorageDto> allStoragesDto = allStorages.stream()
-                .map(StorageProductConvertor::toStorageDto).toList();
+                .map(converter::toStorageDto).toList();
 
         return allStoragesDto.stream()
                 .map(storageDto -> {

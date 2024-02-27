@@ -1,9 +1,9 @@
-package com.storage.mystorage.services.EntityRepos;
+package com.storage.mystorage.services.crud;
 
-import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myEntitys.Product;
-import com.storage.mystorage.myEntitys.Storage;
-import com.storage.mystorage.myRepositories.StorageRepository;
+import com.storage.mystorage.utils.dto.answersDto.StorageDto;
+import com.storage.mystorage.entities.Product;
+import com.storage.mystorage.entities.Storage;
+import com.storage.mystorage.repositories.StorageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,8 @@ public class StorageService {
     }
 
     public Storage findStorageById(Long id) {
-        return storageRepository.findById(id).orElseThrow(()-> new RuntimeException("Storage not exists"));
+        return storageRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Storage not exists"));
     }
 
 
