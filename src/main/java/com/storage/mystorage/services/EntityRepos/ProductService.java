@@ -16,10 +16,10 @@ public class ProductService {
     final ProductRepository productRepository;
 
     public Product saveProduct(Product product){
-        return productRepository.save(product);
+            return productRepository.save(product);
     }
 
-    public Optional<Product> findProductById(Long id){
-        return productRepository.findById(id);
+    public Product findProductById(Long id){
+        return productRepository.findById(id).orElseThrow(()-> new RuntimeException("Storage not exists"));
     }
 }

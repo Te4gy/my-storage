@@ -1,6 +1,7 @@
 package com.storage.mystorage.myEntitys;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
+@EqualsAndHashCode
 public class Product {
 
     @Id
@@ -18,11 +20,11 @@ public class Product {
 
     private String name;
 
-    private int lastSellPrice;
+    private int sellPrice;
 
-    private int lastBuyPrice;
+    private int purchasePrice;
 
-    private boolean isExists = true;
+//    private boolean isExists = true;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductConnection> productConnectionList;

@@ -10,6 +10,7 @@ import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;
 import com.storage.mystorage.myEntitys.Storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,66 +25,108 @@ public class DocumentService {
 
     public List<StorageDto> admission(DocumentsWrapper documentsWrapper) {
         Long storageId = documentsWrapper.getStorageId();
+        Storage storage = storageService.findStorageById(storageId);
 
         Product product = documentsWrapper.getProduct();
         int amount = documentsWrapper.getAmount();
 
         productService.saveProduct(product);
-        ProductConnection productConnection =
-                productConnectionService.saveProductToStorageConnection(storageId, product, amount);
-        Storage storage = productConnection.getStorage();
+        productConnectionService.saveProductToStorageConnection(storage, product, amount);
         StorageDto storageDto = StorageProductConvertor.toStorageDto(storage);
         return List.of(storageDto);
-//        return new ArrayList<>();
     }
 
     public List<StorageDto> sell(DocumentsWrapper sellWrapper) {
-        List<Product> productListToSell = sellWrapper.getProductList();
+        Product productToSell = sellWrapper.getProduct();
+        Long productId = productToSell.getId();
         Long storageId = sellWrapper.getStorageId();
-        Storage storage = storageService.findStorageById(storageId);
-        List<Product> soldProducts = removeProductsFromStorage(storage, productListToSell);
-        return List.of(storageService.saveProductsToStorage(storageId, soldProducts));
-    }
+        int amountToSell = sellWrapper.getAmount();
 
+        Storage storage = storageService.findStorageById(storageId);
+
+        List <ProductConnection> productConnectionList = storage.getProductConnectionList();
+        ProductConnection productConnection = productConnectionList.stream()
+                .filter(e -> e.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No such product!"));
+
+        Product product = productConnection.getProduct();
+        product.setSellPrice(sellWrapper.getProduct().getSellPrice());
+        int newAmount = productConnection.getAmount()-amountToSell;
+
+        ProductConnection savedProductConnection = productConnectionService
+                .saveProductToStorageConnection(
+                        storage,
+                        product,
+                        newAmount);
+        return List.of(StorageProductConvertor.toStorageDto(savedProductConnection.getStorage()));
+    }
+    @Transactional
     public List<StorageDto> transfer(DocumentsWrapper documentsWrapper) {
-//        Long fromStorageId = documentsWrapper.getStorageFromId();
-//        Long toStorageId = documentsWrapper.getStorageToId();
-//        List<Product> productToTransferList = documentsWrapper.getProductList();
-//
-//        //todo ! постарался снизить до минимума количество обращений к бд
-//        List<Storage> allStorages = storageService.findAllStorages();
-//        //todo ? может есть вариант получше?
-//        Map<Long, Storage> storageMap = allStorages.stream()
-//                .filter(storage -> storage.getId().equals(fromStorageId) || storage.getId().equals(toStorageId))
-//                .collect(Collectors.toMap(Storage::getId, Function.identity()));
-//
-//        Storage storageFrom = Optional.ofNullable(storageMap.get(fromStorageId)).orElseThrow(() -> new RuntimeException("Storage from not found"));
-//        Storage storageTo = storageMap.get(toStorageId);
-//        //todo ? это один из вариантов, и мой вопрос какой лучше тот что выше или тот что ниже?
-////        List<Storage> fromToStorages = allStorages.stream()
-////                .filter(storage -> storage.getId().equals(fromStorageId) || storage.getId().equals(toStorageId))
-////                .toList();
-////        Storage storageTo = fromToStorages.stream()
-////                .filter(storage -> storage.getId().equals(fromStorageId))
-////                .findFirst()
-////                .orElseThrow(RuntimeException::new);
-////        Storage storageFrom = fromToStorages.stream()
-////                .filter(storage -> storage.getId().equals(toStorageId))
-////                .findFirst()
-////                .orElseThrow(RuntimeException::new);
-//
-//        List<Product> fromStorageProducts = extractProductsFromStorage(storageFrom, productToTransferList);
-//
-//        storageTo.setProductList(productToTransferList); //добавили продукты на складTO
-//
-//        StorageDto updatedStorageToDto = storageService.saveProductsToStorage(toStorageId, fromStorageProducts); //возвращает дто обновленного складаТО
-//
-//        storageFrom.getProductList().removeAll(fromStorageProducts);
-//        Storage updatedStorageFrom = storageService.saveStorage(storageFrom);
-//        StorageDto updatedStorageFromDto = StorageProductConvertor.toStorageDto(updatedStorageFrom);
-//
-//        return List.of(updatedStorageToDto, updatedStorageFromDto);
-        return null;
+
+        Long storageFromId = documentsWrapper.getStorageFromId();
+        Long storageToId = documentsWrapper.getStorageToId();
+        Long productId = documentsWrapper.getProduct().getId();
+
+        Storage storageFrom = storageService.findStorageById(storageFromId);
+        Storage storageTo = storageService.findStorageById(storageToId);
+
+        Product productToTransfer = productService.findProductById(productId);
+
+        Long productToTransferId = productToTransfer.getId();
+
+        int amountToTransfer = documentsWrapper.getAmount();
+
+        int productConnectionFromNewAmount =
+                storageFrom.getProductConnectionList().stream()
+                        .filter(e -> e.getProduct().getId().equals(productToTransferId))
+                        .findFirst()
+                        .orElseThrow()
+                        .getAmount()
+                - amountToTransfer;
+
+
+        ProductConnection savedProductConnectionFrom =
+                productConnectionService.saveProductToStorageConnection(
+                        storageFrom,
+                        productToTransfer,
+                        productConnectionFromNewAmount
+                );
+
+
+        boolean isProductExistsInStorageTo =
+                productConnectionService.isProductConnectionExists(storageTo, productToTransfer);
+
+
+        ProductConnection savedProductConnectionTo;
+
+        if (isProductExistsInStorageTo){
+            ProductConnection productConnectionInStorageTo = storageTo.getProductConnectionList().stream()
+                    .filter(e-> e.getProduct().getId().equals(productToTransferId))
+                    .findFirst()
+                    .orElseThrow();
+            int newAmountInStorageTo = productConnectionInStorageTo.getAmount()+amountToTransfer;
+            savedProductConnectionTo =
+                    productConnectionService.saveProductToStorageConnection(
+                            storageTo,
+                            productToTransfer,
+                            newAmountInStorageTo
+                    );
+//            savedProductConnectionTo = productConnectionService.changeAmountInStorage(storageTo, productToTransfer, amountToTransfer);
+        }
+
+        else {
+            savedProductConnectionTo =
+                    productConnectionService.saveProductToStorageConnection(
+                            storageTo,
+                            productToTransfer,
+                            amountToTransfer
+                    );
+        }
+
+        return List.of(StorageProductConvertor.toStorageDto(savedProductConnectionFrom.getStorage()),
+                StorageProductConvertor.toStorageDto(savedProductConnectionTo.getStorage()));
+
     }
 
 

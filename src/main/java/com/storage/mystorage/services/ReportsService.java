@@ -35,7 +35,7 @@ public class ReportsService {
                     filtredStorageDto.setName(storageDto.getName());
 
                     List<ProductDto> filteredProductsDto = storageDto.getProductList().stream()
-                            .filter(ProductDto::isExists)
+                            .filter(ProductDto -> ProductDto.getAmount()!=0)
                             .toList();
                     filtredStorageDto.setProductList(filteredProductsDto);
                     return filtredStorageDto;

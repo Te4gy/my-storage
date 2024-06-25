@@ -16,6 +16,9 @@ public class StorageService {
     final StorageRepository storageRepository;
 
     public Storage saveStorage(Storage storage) {
+        if(storage.getProductConnectionList() == null){
+            storage.setProductConnectionList(List.of());
+        }
         storageRepository.save(storage);
         return storage;
     }

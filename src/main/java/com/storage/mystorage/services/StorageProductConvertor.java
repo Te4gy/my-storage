@@ -1,7 +1,6 @@
 package com.storage.mystorage.services;
 
 import com.storage.mystorage.myEntitys.ProductConnection;
-import com.storage.mystorage.services.EntityRepos.ProductService;
 import com.storage.mystorage.utils.myDto.answersDto.ProductDto;
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
 import com.storage.mystorage.myEntitys.Product;
@@ -15,13 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StorageProductConvertor {
 
-    public static ProductDto toProductDto(Product product, Long storageId) {
+    public static ProductDto toProductDto(Product product, Long storageId, int amount) {
         ProductDto productDto = new ProductDto();
         productDto.setId(product.getId());
         productDto.setName(product.getName());
-        productDto.setLastBuyPrice(product.getLastBuyPrice());
-        productDto.setLastSellPrice(product.getLastSellPrice());
-        productDto.setExists(product.isExists());
+        productDto.setPurchasePrice(product.getPurchasePrice());
+        productDto.setSellPrice(product.getSellPrice());
+        productDto.setAmount(amount);
         //todo product не содержит ProductConnection, почему???
         List<ProductConnection> productConnectionList = product.getProductConnectionList();
         productConnectionList.stream()
@@ -46,8 +45,14 @@ public class StorageProductConvertor {
 
         if (storage.getProductConnectionList() != null){
             List<ProductDto> productDtoList = storage.getProductConnectionList().stream()
-                    .map(ProductConnection::getProduct)
-                    .map(product -> StorageProductConvertor.toProductDto(product, storageId))
+//                    .peek(productConnection -> {int amount = productConnection.getAmount();})
+//                    .map(ProductConnection::getProduct)
+//                    .map(product -> StorageProductConvertor.toProductDto(product, storageId, amount))
+
+                    .map(productConnection -> {
+                        int amount = productConnection.getAmount();
+                        Product product = productConnection.getProduct();
+                        return StorageProductConvertor.toProductDto(product, storageId, amount);})
                     .toList();
             storageDto.setProductList(productDtoList);
         }
