@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 
-//todo ? Вроде как места больше тратим создавая лонг переменные которые не используем, но за о вся информация
+//todo ? Вроде как места больше тратим создавая лонг переменные которые не используем, но за то вся информация
 //в одном объекте. Взял пример с мессенджей в телеграм боте, там много очень слотов для инфы но используются не все
 public class DocumentsWrapper {
     private Long storageId;
@@ -17,4 +17,7 @@ public class DocumentsWrapper {
     private Long storageToId;
     private int documentNumber;
     private List<Product> productList;
+
+    private int amount;
+    private Product product;
 }

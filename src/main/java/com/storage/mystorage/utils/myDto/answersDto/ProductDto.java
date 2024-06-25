@@ -13,7 +13,7 @@ import lombok.ToString;
 public class ProductDto {
     private Long id;
     private String name;
-    private int lastSellPrice;
-    private int lastBuyPrice;
-    private boolean isExists;
+    private int sellPrice;
+    private int purchasePrice;
+    private int amount;
 }

@@ -1,5 +1,6 @@
 package com.storage.mystorage.services;
 
+import com.storage.mystorage.services.EntityRepos.StorageService;
 import com.storage.mystorage.utils.myDto.answersDto.ProductDto;
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
 import com.storage.mystorage.myEntitys.Storage;
@@ -34,7 +35,7 @@ public class ReportsService {
                     filtredStorageDto.setName(storageDto.getName());
 
                     List<ProductDto> filteredProductsDto = storageDto.getProductList().stream()
-                            .filter(ProductDto::isExists)
+                            .filter(ProductDto -> ProductDto.getAmount()!=0)
                             .toList();
                     filtredStorageDto.setProductList(filteredProductsDto);
                     return filtredStorageDto;
