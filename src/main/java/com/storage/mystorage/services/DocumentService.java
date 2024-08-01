@@ -70,12 +70,11 @@ public class DocumentService {
 
         Storage storageFrom = storageService.findStorageById(storageFromId);
         Storage storageTo = storageService.findStorageById(storageToId);
-
         Product productToTransfer = productService.findProductById(productId);
 
         Long productToTransferId = productToTransfer.getId();
 
-        int amountToTransfer = documentsWrapper.getAmount();
+        int amountToTransfer = documentsWrapper .getAmount();
 
         int productConnectionFromNewAmount =
                 storageFrom.getProductConnectionList().stream()
@@ -93,7 +92,6 @@ public class DocumentService {
                         productConnectionFromNewAmount
                 );
 
-
         boolean isProductExistsInStorageTo =
                 productConnectionService.isProductConnectionExists(storageTo, productToTransfer);
 
@@ -101,18 +99,10 @@ public class DocumentService {
         ProductConnection savedProductConnectionTo;
 
         if (isProductExistsInStorageTo){
-            ProductConnection productConnectionInStorageTo = storageTo.getProductConnectionList().stream()
-                    .filter(e-> e.getProduct().getId().equals(productToTransferId))
-                    .findFirst()
-                    .orElseThrow();
-            int newAmountInStorageTo = productConnectionInStorageTo.getAmount()+amountToTransfer;
-            savedProductConnectionTo =
-                    productConnectionService.saveProductToStorageConnection(
-                            storageTo,
-                            productToTransfer,
-                            newAmountInStorageTo
-                    );
-//            savedProductConnectionTo = productConnectionService.changeAmountInStorage(storageTo, productToTransfer, amountToTransfer);
+            savedProductConnectionTo = productConnectionService.changeAmountInStorage(
+                    storageTo,
+                    productToTransfer,
+                    amountToTransfer);
         }
 
         else {

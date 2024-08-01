@@ -105,19 +105,19 @@ public class ProductConnectionService {
                 .orElseThrow(() -> new RuntimeException("productConnection"));
     }
 
-//    public ProductConnection changeAmountInStorage(Storage storage, Product product, int amountToTransfer){
-//
-//        ProductConnection productConnectionInStorageTo = storage.getProductConnectionList().stream()
-//                .filter(e-> e.getProduct().getId().equals(product.getId()))
-//                .findFirst()
-//                .orElseThrow();
-//        int newAmountInStorageTo = productConnectionInStorageTo.getAmount()+amountToTransfer;
-//        ProductConnection savedProductConnectionTo =
-//                        saveProductToStorageConnection(
-//                        storage,
-//                        product,
-//                        newAmountInStorageTo
-//                );
-//        return savedProductConnectionTo;
-//    }
+    public ProductConnection changeAmountInStorage(Storage storage, Product product, int amountToTransfer){
+
+        ProductConnection productConnectionInStorageTo = storage.getProductConnectionList().stream()
+                .filter(e-> e.getProduct().getId().equals(product.getId()))
+                .findFirst()
+                .orElseThrow();
+        int newAmountInStorageTo = productConnectionInStorageTo.getAmount()+amountToTransfer;
+        ProductConnection savedProductConnectionTo =
+                        saveProductToStorageConnection(
+                        storage,
+                        product,
+                        newAmountInStorageTo
+                );
+        return savedProductConnectionTo;
+    }
 }
