@@ -8,6 +8,7 @@ public class MyStorageApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MyStorageApplication.class, args);
+        123
     }
 
 }
