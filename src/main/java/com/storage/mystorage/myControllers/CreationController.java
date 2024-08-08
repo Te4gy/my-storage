@@ -21,19 +21,10 @@ public class CreationController {
     final RestTemplate restTemplate;
 
     @PostMapping("/storage")
-    public ResponseEntity<?> newStorage(@RequestBody Storage request) {
+    public Storage newStorage(@RequestBody Storage request) {
         Storage storage = new Storage();
         storage.setName(request.getName());
         storageService.saveStorage(storage);
-
-        String url = "http://localhost:8080/new/respond";
-
-        Storage response = restTemplate.postForObject(url, storage, Storage.class);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/respond")
-    public ResponseEntity<?> respond(){
-        return new ResponseEntity<>(HttpStatus.OK);
+        return storage;
     }
 }

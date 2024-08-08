@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-product_connection
+      author: Martin
+      changes:
+        - createTable:
+            tableName: product_connection
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: amount
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: storage_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: product_connection
+            baseColumnNames: product_id
+            constraintName: fk_connection_product
+            referencedTableName: product
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: product_connection
+            baseColumnNames: storage_id
+            constraintName: fk_connection_storage
+            referencedTableName: storage
+            referencedColumnNames: id
