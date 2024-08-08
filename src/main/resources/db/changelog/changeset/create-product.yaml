@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-storage
+      author: Martin
+      changes:
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: purchase_price
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sell_price
+                  type: bigint
+                  constraints:
+                    nullable: false

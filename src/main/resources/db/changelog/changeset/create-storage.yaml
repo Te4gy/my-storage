@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: create-storage2
+      id: create-storage
       author: Martin
       changes:
         - createTable:
-            tableName: storage2
+            tableName: storage
             columns:
               - column:
                   name: id
