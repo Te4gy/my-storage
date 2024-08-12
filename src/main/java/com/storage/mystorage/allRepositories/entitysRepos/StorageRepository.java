@@ -1,6 +1,6 @@
-package com.storage.mystorage.myRepositories;
+package com.storage.mystorage.allRepositories.entitysRepos;
 
-import com.storage.mystorage.myEntitys.Storage;
+import com.storage.mystorage.allEntitys.Storage;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 

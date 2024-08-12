@@ -1,6 +1,6 @@
 package com.storage.mystorage.utils.myDto.wrapperDto;
 
-import com.storage.mystorage.myEntitys.Product;
+import com.storage.mystorage.allEntitys.Product;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +15,6 @@ public class DocumentsWrapper {
     private Long storageId;
     private Long storageFromId;
     private Long storageToId;
-    private int documentNumber;
     private List<Product> productList;
 
     private int amount;

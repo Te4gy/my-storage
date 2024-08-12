@@ -1,19 +1,22 @@
 package com.storage.mystorage.services;
 
-import com.storage.mystorage.myEntitys.ProductConnection;
-import com.storage.mystorage.services.EntityRepos.ProductConnectionService;
-import com.storage.mystorage.services.EntityRepos.ProductService;
-import com.storage.mystorage.services.EntityRepos.StorageService;
+import com.storage.mystorage.allEntitys.ProductConnection;
+import com.storage.mystorage.services.entityServices.ProductConnectionService;
+import com.storage.mystorage.services.entityServices.ProductService;
+import com.storage.mystorage.services.entityServices.StorageService;
+import com.storage.mystorage.services.tools.StorageProductConvertor;
+import com.storage.mystorage.utils.myDto.answersDto.ProductConnectionDto;
+import com.storage.mystorage.utils.myDto.answersDto.ProductDto;
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myEntitys.Product;
+import com.storage.mystorage.allEntitys.Product;
 import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;
-import com.storage.mystorage.myEntitys.Storage;
+import com.storage.mystorage.allEntitys.Storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +25,9 @@ public class DocumentService {
     final StorageService storageService;
     final ProductService productService;
     final ProductConnectionService productConnectionService;
+    final RedisService redisService;
 
+    @Transactional
     public List<StorageDto> admission(DocumentsWrapper documentsWrapper) {
         Long storageId = documentsWrapper.getStorageId();
         Storage storage = storageService.findStorageById(storageId);
@@ -36,30 +41,100 @@ public class DocumentService {
         return List.of(storageDto);
     }
 
+    @Transactional
     public List<StorageDto> sell(DocumentsWrapper sellWrapper) {
         Product productToSell = sellWrapper.getProduct();
         Long productId = productToSell.getId();
         Long storageId = sellWrapper.getStorageId();
         int amountToSell = sellWrapper.getAmount();
 
-        Storage storage = storageService.findStorageById(storageId);
+// 1  /\
 
-        List <ProductConnection> productConnectionList = storage.getProductConnectionList();
-        ProductConnection productConnection = productConnectionList.stream()
+
+        List<ProductConnectionDto> cachedProductConnectionDtoList =
+                redisService.findAllProductConnectionDtoFromCache();
+
+        Optional<ProductConnectionDto> optionalProductConnectionDto = cachedProductConnectionDtoList.stream()
                 .filter(e -> e.getProduct().getId().equals(productId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No such product!"));
+                .findFirst();
+
+        ProductConnection productConnection;
+
+        if (optionalProductConnectionDto.isPresent()){
+            ProductConnectionDto cachedProductConnectionDto = optionalProductConnectionDto.get();
+
+            ProductDto productDto = cachedProductConnectionDto.getProduct();
+            Product product = new Product();
+            product.setId(productDto.getId());
+            product.setName(productDto.getName());
+            product.setPurchasePrice(productDto.getPurchasePrice());
+            product.setSellPrice(productDto.getSellPrice());
+
+            int amount =productDto.getAmount();
+
+            StorageDto storageDto = cachedProductConnectionDto.getStorage();
+            Storage storage = new Storage();
+            storage.setId(storageDto.getId());
+            storage.setName(storageDto.getName());
+
+            productConnection = new ProductConnection(
+                    cachedProductConnectionDto.getId(),
+                    product,
+                    storage,
+                    amount
+                );
+
+//            productConnectionService.saveProductConnection(productConnection);
+//
+//
+//            return List.of();
+
+        }
+
+        else {
+            Storage storage = storageService.findStorageById(storageId);
+
+            List <ProductConnection> productConnectionList = storage.getProductConnectionList();
+            productConnection = productConnectionList.stream()
+                    .filter(e -> e.getProduct().getId().equals(productId))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("No such product!"));
+        }
 
         Product product = productConnection.getProduct();
+        Storage storage = productConnection.getStorage();
         product.setSellPrice(sellWrapper.getProduct().getSellPrice());
         int newAmount = productConnection.getAmount()-amountToSell;
+        productConnection.setProduct(product);
+        productConnection.setStorage(storage);
+        productConnection.setAmount(newAmount);
 
+
+//        return List.of();
         ProductConnection savedProductConnection = productConnectionService
-                .saveProductToStorageConnection(
-                        storage,
-                        product,
-                        newAmount);
-        return List.of(StorageProductConvertor.toStorageDto(savedProductConnection.getStorage()));
+                .saveProductConnection(productConnection);
+
+        return List.of(StorageProductConvertor.fromProductConnectionTotoStorageDtoAnswer(savedProductConnection));
+
+
+
+//  1   \/
+//        List <ProductConnection> productConnectionList = storage.getProductConnectionList();
+//        ProductConnection productConnection = productConnectionList.stream()
+//                .filter(e -> e.getProduct().getId().equals(productId))
+//                .findFirst()
+//                .orElseThrow(() -> new IllegalArgumentException("No such product!"));
+
+//        Product product = productConnection.getProduct();
+//        product.setSellPrice(sellWrapper.getProduct().getSellPrice());
+//        int newAmount = productConnection.getAmount()-amountToSell;
+//
+//        ProductConnection savedProductConnection = productConnectionService
+//                .saveProductToStorageConnection(
+//                        storage,
+//                        product,
+//                        newAmount);
+//        return List.of(StorageProductConvertor.toStorageDto(savedProductConnection.getStorage()));
     }
     @Transactional
     public List<StorageDto> transfer(DocumentsWrapper documentsWrapper) {

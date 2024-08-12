@@ -1,13 +1,9 @@
-package com.storage.mystorage.services.EntityRepos;
+package com.storage.mystorage.services.entityServices;
 
-import com.storage.mystorage.myEntitys.Product;
-import com.storage.mystorage.myEntitys.ProductConnection;
-import com.storage.mystorage.myEntitys.Storage;
-import com.storage.mystorage.myRepositories.ProductRepository;
+import com.storage.mystorage.allEntitys.Product;
+import com.storage.mystorage.allRepositories.entitysRepos.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

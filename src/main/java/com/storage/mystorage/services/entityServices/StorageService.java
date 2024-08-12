@@ -1,13 +1,14 @@
-package com.storage.mystorage.services.EntityRepos;
+package com.storage.mystorage.services.entityServices;
 
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myEntitys.Product;
-import com.storage.mystorage.myEntitys.Storage;
-import com.storage.mystorage.myRepositories.StorageRepository;
+import com.storage.mystorage.allEntitys.Product;
+import com.storage.mystorage.allEntitys.Storage;
+import com.storage.mystorage.allRepositories.entitysRepos.StorageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,4 +43,5 @@ public class StorageService {
     public List<Storage> findAllStorages(){
         return storageRepository.findAll();
     }
+
 }

@@ -1,5 +1,6 @@
 package com.storage.mystorage.myControllers;
 
+import com.storage.mystorage.services.scheduled.ProductsValueCheck;
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
 import com.storage.mystorage.services.Receiver;
 import com.storage.mystorage.services.ReportsService;
@@ -21,9 +22,18 @@ public class ReportsController {
     final ReportsService reportsService;
     final Receiver receiver;
 
+    //test
+    final ProductsValueCheck productsValueCheck;
+
     @GetMapping("/{report}")
     public ResponseEntity<List<StorageDto>> report(@PathVariable("report") String report) {
         List<StorageDto> storageDtosList = receiver.reportReceived(report);
         return new ResponseEntity<>(storageDtosList, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/test")
+    public void test(){
+        productsValueCheck.cachingValuableProductsConnections();
     }
 }
