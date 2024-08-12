@@ -1,10 +1,11 @@
-package com.storage.mystorage.services;
+package com.storage.mystorage.services.tools;
 
-import com.storage.mystorage.myEntitys.ProductConnection;
+import com.storage.mystorage.allEntitys.ProductConnection;
+import com.storage.mystorage.utils.myDto.answersDto.ProductConnectionDto;
 import com.storage.mystorage.utils.myDto.answersDto.ProductDto;
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
-import com.storage.mystorage.myEntitys.Product;
-import com.storage.mystorage.myEntitys.Storage;
+import com.storage.mystorage.allEntitys.Product;
+import com.storage.mystorage.allEntitys.Storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,6 @@ public class StorageProductConvertor {
         productDto.setPurchasePrice(product.getPurchasePrice());
         productDto.setSellPrice(product.getSellPrice());
         productDto.setAmount(amount);
-        //todo product не содержит ProductConnection, почему???
         List<ProductConnection> productConnectionList = product.getProductConnectionList();
         productConnectionList.stream()
                 .filter(productConnection -> productConnection
@@ -57,5 +57,32 @@ public class StorageProductConvertor {
             storageDto.setProductList(productDtoList);
         }
         return storageDto;
+    }
+
+    public static ProductConnectionDto toProductConnectionDto(ProductConnection productConnection){
+        ProductConnectionDto productConnectionDto = new ProductConnectionDto();
+        Long productConnectionId = productConnection.getId();
+        int amount = productConnection.getAmount();
+        Long storageId = productConnection.getStorage().getId();
+        Product product = productConnection.getProduct();
+        ProductDto productDto = toProductDto(product, storageId, amount);
+        productDto.setAmount(amount);
+        Storage storage = productConnection.getStorage();
+        StorageDto storageDto = toStorageDto(storage);
+        productConnectionDto.setId(productConnectionId);
+        productConnectionDto.setStorage(storageDto);
+        productConnectionDto.setProduct(productDto);
+        return productConnectionDto;
+    }
+
+    public static StorageDto fromProductConnectionTotoStorageDtoAnswer(ProductConnection productConnection){
+        Storage storage = productConnection.getStorage();
+        Product product = productConnection.getProduct();
+        product.setProductConnectionList(List.of(productConnection));
+        productConnection.setProduct(product);
+        storage.setProductConnectionList(List.of(productConnection));
+        return toStorageDto(storage);
+
+
     }
 }

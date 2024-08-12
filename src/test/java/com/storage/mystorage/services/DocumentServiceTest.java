@@ -1,11 +1,11 @@
 package com.storage.mystorage.services;
 
-import com.storage.mystorage.myEntitys.Product;
-import com.storage.mystorage.myEntitys.ProductConnection;
-import com.storage.mystorage.myEntitys.Storage;
-import com.storage.mystorage.services.EntityRepos.ProductConnectionService;
-import com.storage.mystorage.services.EntityRepos.ProductService;
-import com.storage.mystorage.services.EntityRepos.StorageService;
+import com.storage.mystorage.allEntitys.Product;
+import com.storage.mystorage.allEntitys.ProductConnection;
+import com.storage.mystorage.allEntitys.Storage;
+import com.storage.mystorage.services.entityServices.ProductConnectionService;
+import com.storage.mystorage.services.entityServices.ProductService;
+import com.storage.mystorage.services.entityServices.StorageService;
 import com.storage.mystorage.utils.myDto.answersDto.ProductDto;
 import com.storage.mystorage.utils.myDto.answersDto.StorageDto;
 import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;

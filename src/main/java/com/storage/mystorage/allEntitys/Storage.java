@@ -1,4 +1,4 @@
-package com.storage.mystorage.myEntitys;
+package com.storage.mystorage.allEntitys;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

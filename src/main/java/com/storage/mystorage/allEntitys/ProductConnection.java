@@ -1,12 +1,14 @@
-package com.storage.mystorage.myEntitys;
+package com.storage.mystorage.allEntitys;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductConnection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +23,5 @@ public class ProductConnection {
     Storage storage;
 
     int amount;
-
 
 }

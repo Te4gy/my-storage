@@ -1,7 +1,8 @@
-package com.storage.mystorage.myRepositories;
+package com.storage.mystorage.allRepositories.entitysRepos;
 
-import com.storage.mystorage.myEntitys.ProductConnection;
+import com.storage.mystorage.allEntitys.ProductConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductConnectionRepository extends JpaRepository<ProductConnection, Long> {
+
 }

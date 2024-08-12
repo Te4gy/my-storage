@@ -1,11 +1,11 @@
-package com.storage.mystorage.services.EntityRepos;
+package com.storage.mystorage.services.entityServices;
 
-import com.storage.mystorage.myEntitys.Product;
-import com.storage.mystorage.myEntitys.ProductConnection;
-import com.storage.mystorage.myEntitys.Storage;
-import com.storage.mystorage.myRepositories.ProductConnectionRepository;
-import com.storage.mystorage.myRepositories.ProductRepository;
-import com.storage.mystorage.utils.myDto.wrapperDto.DocumentsWrapper;
+import com.storage.mystorage.allEntitys.Product;
+import com.storage.mystorage.allEntitys.ProductConnection;
+import com.storage.mystorage.allEntitys.Storage;
+import com.storage.mystorage.allRepositories.entitysRepos.ProductConnectionRepository;
+import com.storage.mystorage.allRepositories.RedisRepository;
+import com.storage.mystorage.utils.myDto.answersDto.ProductConnectionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +21,9 @@ public class ProductConnectionService {
     final ProductConnectionRepository productConnectionRepository;
     final ProductService productService;
     final StorageService storageService;
+    final RedisRepository redisRepository;
+
+
 
     @Transactional
     public ProductConnection saveProductToStorageConnection(Storage storage, Product product, int amount) {
@@ -35,12 +37,20 @@ public class ProductConnectionService {
         if (isProductConnectionExists(storage, product)) {
             productConnection = getProductConnection(storage, product);
 
+//        } else if (isProductExistsInStorage(storage, product)) {
+//            Product productFromDb = productService.findProductById(product.getId());
+//            storage.setProductConnectionList(List.of(productConnection));
+//            productConnection.setProduct(productFromDb);
+//            product.addProductConnection(productConnection);
+//            productConnection.setStorage(storage);
+
         } else if (isProductExistsInStorage(storage, product)) {
             Product productFromDb = productService.findProductById(product.getId());
             storage.setProductConnectionList(List.of(productConnection));
             productConnection.setProduct(productFromDb);
             product.addProductConnection(productConnection);
             productConnection.setStorage(storage);
+
 
         } else {
 
@@ -120,4 +130,9 @@ public class ProductConnectionService {
                 );
         return savedProductConnectionTo;
     }
+
+    public ProductConnection saveProductConnection(ProductConnection productConnection){
+        return productConnectionRepository.save(productConnection);
+    }
+
 }

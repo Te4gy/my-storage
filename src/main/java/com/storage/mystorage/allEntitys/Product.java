@@ -1,4 +1,4 @@
-package com.storage.mystorage.myEntitys;
+package com.storage.mystorage.allEntitys;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -24,11 +24,8 @@ public class Product {
 
     private int purchasePrice;
 
-//    private boolean isExists = true;
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductConnection> productConnectionList;
-
 
     public void addProductConnection(ProductConnection productConnection){
         if (productConnection != null) {
